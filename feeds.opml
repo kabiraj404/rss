@@ -10,7 +10,6 @@
     <outline category="Data_science" text="Skeptical Science" title="Skeptical Science" xmlUrl="http://skepticalscience.com/feed.xml" htmlUrl="https://skepticalscience.com/"/>
     <outline category="Data_science" text="NOAA Monthly Climate Report " title="NOAA Monthly Climate Report" xmlUrl="https://www.ncei.noaa.gov/access/monitoring/monthly-report/feed.rss" htmlUrl="https://www.ncei.noaa.gov/access/monitoring/monthly-report/"/>
     <outline category="Data_science" text="RealClimate" title="RealClimate" xmlUrl="http://feeds.feedburner.com/realclimate/HYVV" htmlUrl="https://www.realclimate.org"/>
-    <outline category="Data_science" text="Nature daily briefing" title="Nature daily briefing" xmlUrl="https://www.nature.com/nature/articles?type=nature-briefing&amp;format=rss" htmlUrl="https://www.nature.com/nature/articles?type=nature-briefing"/>
     <outline category="Data_science" text="Science weekly" title="Science weekly" xmlUrl="https://www.science.org/action/showFeed?type=etoc&amp;feed=rss&amp;jc=science" htmlUrl="https://www.science.org/loi/science?af=R"/>
 
 
