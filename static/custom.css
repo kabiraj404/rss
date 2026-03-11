@@ -19,10 +19,7 @@ body {
 
 body {
     font-family: "IBM Plex Sans", "Segoe UI", sans-serif !important;
-    background:
-        radial-gradient(circle at 18% 8%, rgba(236, 111, 55, 0.2), transparent 35%),
-        radial-gradient(circle at 83% 12%, rgba(13, 110, 110, 0.2), transparent 38%),
-        linear-gradient(170deg, var(--bg-main), var(--bg-soft));
+    background: var(--bg-main);
     color: var(--text-main) !important;
     display: flex;
     flex-direction: column;
@@ -37,34 +34,8 @@ body {
     z-index: 2;
 }
 
-.bg-orb {
-    position: fixed;
-    border-radius: 999px;
-    filter: blur(10px);
-    opacity: 0.45;
-    z-index: 1;
-    pointer-events: none;
-}
-
-.orb-1 {
-    width: 320px;
-    height: 320px;
-    background: rgba(236, 111, 55, 0.22);
-    top: -140px;
-    left: -80px;
-}
-
-.orb-2 {
-    width: 280px;
-    height: 280px;
-    background: rgba(13, 110, 110, 0.22);
-    top: 120px;
-    right: -120px;
-}
-
 .site-nav {
-    background: rgba(255, 249, 238, 0.82) !important;
-    backdrop-filter: blur(8px);
+    background: rgba(255, 249, 238, 0.9) !important;
     border-bottom: 1px solid rgba(216, 199, 174, 0.9);
 }
 
@@ -101,54 +72,32 @@ body {
     color: var(--accent-strong) !important;
 }
 
-.hero-card {
-    background: linear-gradient(135deg, rgba(255, 249, 238, 0.95), rgba(255, 244, 223, 0.9));
+.minimal-header {
+    background: rgba(255, 249, 238, 0.9);
     border: 1px solid var(--border);
-    border-radius: 1rem;
-    padding: 1.5rem 1.25rem;
-    box-shadow: var(--shadow-soft);
-    animation: fadeRise 0.6s ease;
+    border-radius: 0.65rem;
+    padding: 1rem;
 }
 
-.hero-kicker {
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    font-size: 0.72rem;
-    color: var(--accent-strong);
+.minimal-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.35rem;
     font-weight: 600;
 }
 
-.hero-title {
-    font-family: "Space Grotesk", sans-serif;
-    letter-spacing: -0.02em;
-    font-size: clamp(1.7rem, 3.2vw, 2.5rem);
-    margin-bottom: 0.65rem;
-}
-
-.hero-description {
+.minimal-meta {
+    font-size: 0.92rem;
     color: var(--text-muted);
-    max-width: 70ch;
-    margin-bottom: 0.9rem;
 }
 
-.hero-meta-wrap {
-    display: flex;
-    gap: 0.6rem;
-    flex-wrap: wrap;
-}
-
-.meta-pill {
-    color: var(--text-main);
-    background: rgba(13, 110, 110, 0.08);
-    border: 1px solid rgba(13, 110, 110, 0.24);
-    border-radius: 999px;
-    padding: 0.35rem 0.72rem;
-    font-size: 0.88rem;
+.meta-sep {
+    margin: 0 0.45rem;
+    color: var(--border);
 }
 
 .section-heading h2 {
-    font-family: "Space Grotesk", sans-serif;
-    letter-spacing: -0.01em;
+    font-size: 1.2rem;
+    font-weight: 600;
 }
 
 .feed-count {
@@ -180,7 +129,7 @@ body {
 }
 
 .feed-accordion {
-    animation: fadeRise 0.5s ease;
+    animation: fadeRise 0.3s ease;
 }
 
 .accordion-item {
@@ -318,12 +267,8 @@ body {
 }
 
 @media (max-width: 767.98px) {
-    .hero-card {
-        padding: 1.1rem 0.95rem;
-    }
-
-    .hero-description {
-        font-size: 1rem;
+    .minimal-header {
+        padding: 0.85rem;
     }
 
     .accordion-button {
@@ -346,7 +291,7 @@ body {
         margin-left: 0.45rem !important;
     }
 
-    .orb-2 {
-        right: -170px;
+    .minimal-meta {
+        font-size: 0.84rem;
     }
 }

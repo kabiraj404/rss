@@ -45,15 +45,8 @@
         </script>
     </head>
     <body>
-        <div class="bg-orb orb-1" aria-hidden="true"></div>
-        <div class="bg-orb orb-2" aria-hidden="true"></div>
-
         <nav class="navbar navbar-expand-lg site-nav mb-4">
             <div class="container">
-                <a class="navbar-brand" href="#">
-                    <span style="font-size: 30px; margin-right: 8px">🌟</span>
-                    {{ site_data.title }}
-                </a>
                 <button
                     class="navbar-toggler"
                     type="button"
@@ -117,31 +110,21 @@
         </nav>
 
         <div class="container">
-            <header class="mb-5 hero-card">
-                <p class="hero-kicker mb-2">Personal Knowledge Stream</p>
-                <h1 class="hero-title">{{ site_data.title }}</h1>
-                <p class="lead hero-description" id="site-description">
-                    {{ site_data.description }}
+            <header class="mb-4 minimal-header">
+                <h1 class="minimal-title">RSS from a few websites</h1>
+                <p class="minimal-meta mb-0">
+                    Last updated: <span id="updated-time"></span>
+                    <span class="meta-sep">|</span>
+                    Next update in ~<span id="update-interval"></span> hours
                 </p>
-                <div class="hero-meta-wrap">
-                    <p class="meta-pill mb-0">
-                        Last updated: <span id="updated-time"></span>
-                    </p>
-                    <p class="meta-pill mb-0">
-                        Next update in ~<span id="update-interval"></span> hours
-                    </p>
-                </div>
             </header>
 
             <!-- All Feeds Section -->
             <section id="all-feeds">
                 <div class="section-heading mb-4">
-                    <h2 class="mb-1">
-                        All Feeds <span class="feed-count">(<span id="total-feeds"></span>)</span>
+                    <h2 class="mb-0">
+                        Feeds <span class="feed-count">(<span id="total-feeds"></span>)</span>
                     </h2>
-                    <p class="mb-0 text-muted">
-                        Browse by category or expand any source to read recent items.
-                    </p>
                 </div>
 
                 <div id="category-tabs-container">
