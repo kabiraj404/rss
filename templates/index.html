@@ -10,6 +10,19 @@
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
         />
+        <link
+            rel="preconnect"
+            href="https://fonts.googleapis.com"
+        />
+        <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossorigin
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+            rel="stylesheet"
+        />
         <link rel="stylesheet" href="static/custom.css" />
         <link
             rel="alternate"
@@ -32,7 +45,10 @@
         </script>
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg mb-4">
+        <div class="bg-orb orb-1" aria-hidden="true"></div>
+        <div class="bg-orb orb-2" aria-hidden="true"></div>
+
+        <nav class="navbar navbar-expand-lg site-nav mb-4">
             <div class="container">
                 <a class="navbar-brand" href="#">
                     <span style="font-size: 30px; margin-right: 8px">🌟</span>
@@ -101,19 +117,32 @@
         </nav>
 
         <div class="container">
-            <header class="mb-5">
-                <p class="lead" id="site-description">
+            <header class="mb-5 hero-card">
+                <p class="hero-kicker mb-2">Personal Knowledge Stream</p>
+                <h1 class="hero-title">{{ site_data.title }}</h1>
+                <p class="lead hero-description" id="site-description">
                     {{ site_data.description }}
                 </p>
-                <p class="text-muted">
-                    Last updated: <span id="updated-time"></span> | Next update
-                    in ~<span id="update-interval"></span> hours
-                </p>
+                <div class="hero-meta-wrap">
+                    <p class="meta-pill mb-0">
+                        Last updated: <span id="updated-time"></span>
+                    </p>
+                    <p class="meta-pill mb-0">
+                        Next update in ~<span id="update-interval"></span> hours
+                    </p>
+                </div>
             </header>
 
             <!-- All Feeds Section -->
             <section id="all-feeds">
-                <h2 class="mb-4">All Feeds (<span id="total-feeds"></span>)</h2>
+                <div class="section-heading mb-4">
+                    <h2 class="mb-1">
+                        All Feeds <span class="feed-count">(<span id="total-feeds"></span>)</span>
+                    </h2>
+                    <p class="mb-0 text-muted">
+                        Browse by category or expand any source to read recent items.
+                    </p>
+                </div>
 
                 <div id="category-tabs-container">
                     <!-- Category tabs will be injected here -->
@@ -125,7 +154,7 @@
             </section>
         </div>
 
-        <footer class="text-center py-4 mt-5">
+        <footer class="text-center py-4 mt-5 site-footer">
             <p>
                 Source code: 
                 <a
@@ -210,7 +239,7 @@
 
                 if (data.ui_settings.horizontal_menu) {
                     const tabsUl = document.createElement("ul");
-                    tabsUl.className = "nav nav-pills mb-3";
+                    tabsUl.className = "nav nav-pills mb-4 feed-tabs";
                     tabsUl.id = "category-tabs";
                     tabsUl.role = "tablist";
 
@@ -231,7 +260,7 @@
 
                 // "All" tab content
                 let allFeedsHtml =
-                    '<div class="accordion" id="feeds-accordion-all">';
+                    '<div class="accordion feed-accordion" id="feeds-accordion-all">';
                 data.feeds.forEach((feed, index) => {
                     allFeedsHtml += createFeedAccordionItem(
                         feed,
@@ -256,7 +285,7 @@
                     const categoryId = category
                         .toLowerCase()
                         .replace(/[^a-z0-9]/g, "");
-                    let categoryFeedsHtml = `<div class="accordion" id="feeds-accordion-${categoryId}">`;
+                    let categoryFeedsHtml = `<div class="accordion feed-accordion" id="feeds-accordion-${categoryId}">`;
                     categoryFeedList.forEach((feed, index) => {
                         categoryFeedsHtml += createFeedAccordionItem(
                             feed,
@@ -287,11 +316,11 @@
                 entries_by_feed,
             ) {
                 const entries = entries_by_feed[feed.url] || [];
-                let entriesHtml = '<ul class="list-group">';
+                let entriesHtml = '<ul class="list-group entry-list">';
                 entries.forEach((entry) => {
                     entriesHtml += `
                     <li class="list-group-item">
-                        <a href="${entry.link}" target="_blank">${entry.title}</a>
+                        <a href="${entry.link}" target="_blank" rel="noopener noreferrer">${entry.title}</a>
                         <small class="text-muted d-block">${formatRelativeTime(entry.published_parsed)}</small>
                     </li>
                 `;
@@ -303,17 +332,17 @@
                     <h2 class="accordion-header" id="heading-${index}-${category}">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${index}-${category}" aria-expanded="false" aria-controls="collapse-${index}-${category}">
                             <img src="${feed.favicon_url}" alt="" width="16" height="16" class="me-2 rounded">
-                            ${feed.title}
+                            <span class="feed-name">${feed.title}</span>
                             ${feed.has_recent_update ? '<span class="badge bg-primary ms-2">New</span>' : ""}
-                            <small class="text-muted ms-auto latest-update-text">
+                            <small class="text-muted ms-auto latest-update-text d-none d-md-inline-block">
                                 Updated ${formatRelativeTime(feed.latest_post_parsed)}
                             </small>
                         </button>
                     </h2>
                     <div id="collapse-${index}-${category}" class="accordion-collapse collapse" aria-labelledby="heading-${index}-${category}" data-bs-parent="#feeds-accordion-${category}">
                         <div class="accordion-body">
-                            <p>${feed.description || ""}</p>
-                            <p><a href="${feed.link}" target="_blank" class="btn btn-sm btn-outline-primary">Visit Website</a></p>
+                            <p class="feed-description mb-3">${feed.description || "No description available."}</p>
+                            <p class="mb-3"><a href="${feed.link}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary">Visit Website</a></p>
                             ${entriesHtml}
                         </div>
                     </div>
