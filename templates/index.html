@@ -216,9 +216,9 @@
                     "latest-articles-tab",
                 );
                 latestArticlesPane.innerHTML = data.latest_entries && data.latest_entries.length
-                    ? `<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">${data.latest_entries
+                    ? `<div class="latest-articles-list">${data.latest_entries
                           .map((entry) => createLatestArticleCard(entry))
-                          .join("")}</div>`
+                          .join("<br>")}</div>`
                     : '<div class="alert alert-secondary mb-0">No articles available.</div>';
                 categoryTabsContent.appendChild(latestArticlesPane);
 
