@@ -297,26 +297,18 @@
             }
 
             function createLatestArticleCard(entry) {
-                const excerpt = truncateText(
-                    cleanHtml(entry.summary || entry.description || ""),
-                    180,
-                );
                 const feedName = entry.feed_title || "Latest Feed";
-                const feedFavicon = entry.feed_favicon_url || "";
 
                 return `
                 <div class="col">
                     <article class="article-card h-100">
                         <div class="article-card-body">
                             <div class="article-source mb-2">
-                                ${feedFavicon ? `<img src="${feedFavicon}" alt="" width="16" height="16" class="rounded">` : ""}
                                 <span>${feedName}</span>
                             </div>
-                            <h3 class="article-title">
+                            <h3 class="article-title mb-0">
                                 <a href="${entry.link}" target="_blank" rel="noopener noreferrer">${entry.title}</a>
                             </h3>
-                            <p class="article-meta mb-2 text-muted">${formatRelativeTime(entry.published_parsed)}</p>
-                            ${excerpt ? `<p class="article-excerpt mb-0">${excerpt}</p>` : ""}
                         </div>
                     </article>
                 </div>
