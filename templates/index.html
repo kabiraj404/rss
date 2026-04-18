@@ -309,15 +309,7 @@
             function createLatestArticleCard(entry) {
                 const feedName = entry.feed_title || "Latest Feed";
 
-                return `
-                <div class="col">
-                    <article class="article-card h-100">
-                        <div class="article-card-body">
-                                <span>${feedName}: <a href="${entry.link}" target="_blank" rel="noopener noreferrer">${entry.title}</a> </span>
-                        </div>
-                    </article>
-                </div>
-            `;
+                return `${feedName}:<a href="${entry.link}" target="_blank" rel="noopener noreferrer">${entry.title}</a>`;
             }
         </script>
     </body>
