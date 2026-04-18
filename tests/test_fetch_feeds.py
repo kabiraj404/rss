@@ -103,6 +103,27 @@ def test_parse_opml(opml_file, config_file):
     assert feeds[1]["url"] == "http://example.com/feed2.xml"
 
 
+def test_parse_opml_includes_html_only_sources(tmp_path, config_file):
+    opml_content = """
+    <opml version="1.0">
+        <body>
+            <outline text="Magnum Photos" title="Magnum Photos" htmlUrl="https://www.magnumphotos.com/"/>
+        </body>
+    </opml>
+    """
+    opml_file = tmp_path / "rss.opml"
+    opml_file.write_text(opml_content)
+
+    hub = RSSHub(opml_file=str(opml_file), config_file=config_file)
+    feeds = hub.parse_opml()
+
+    assert len(feeds) == 1
+    assert feeds[0]["title"] == "Magnum Photos"
+    assert feeds[0]["url"] == "https://www.magnumphotos.com/"
+    assert feeds[0]["rss_url"] == ""
+    assert feeds[0]["html_url"] == "https://www.magnumphotos.com/"
+
+
 def test_generate_latest_rss(hub):
     hub.generate_latest_rss()
     rss_file = hub.config["output_files"]["rss"]
@@ -137,7 +158,7 @@ def test_generate_html(hub):
         assert "<title>Test Site</title>" in content
         assert "Test Site" in content
         assert "Test Description" in content
-        assert "Latest 50 Articles" in content
+        assert "Latest Articles" in content
 
 
 def test_generate_site_data_includes_latest_entries(hub):

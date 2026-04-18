@@ -96,22 +96,34 @@ class RSSHub:
 
             root = ET.fromstring(content)
 
-            # Find all outline elements with xmlUrl attribute
-            for outline in root.findall(".//outline[@xmlUrl]"):
-                feed_url = outline.get("xmlUrl")
+            # Include all outline elements that have either RSS (xmlUrl)
+            # or a website URL (htmlUrl) so non-RSS sources are still listed.
+            for outline in root.findall(".//outline"):
+                feed_url = (outline.get("xmlUrl") or "").strip()
+                html_url = (outline.get("htmlUrl") or "").strip()
                 title = outline.get("title") or outline.get("text", "Unknown Feed")
                 category = outline.get("category", "")
 
-                if validate_url(feed_url):
+                valid_feed_url = feed_url if feed_url and validate_url(feed_url) else ""
+                valid_html_url = html_url if html_url and validate_url(html_url) else ""
+
+                if feed_url and not valid_feed_url:
+                    print(f"⚠️  Invalid RSS URL for {title}: {feed_url}")
+                if html_url and not valid_html_url:
+                    print(f"⚠️  Invalid website URL for {title}: {html_url}")
+
+                if valid_feed_url or valid_html_url:
                     feeds.append(
                         {
                             "title": title.strip(),
-                            "url": feed_url.strip(),
+                            "url": valid_feed_url or valid_html_url,
+                            "rss_url": valid_feed_url,
+                            "html_url": valid_html_url,
                             "category": category.strip(),
                         }
                     )
                 else:
-                    print(f"⚠️  Skipping invalid URL: {feed_url}")
+                    print(f"⚠️  Skipping {title}: no valid xmlUrl/htmlUrl found")
 
         except ET.ParseError as e:
             print(f"❌ Error parsing OPML: {e}")
@@ -132,7 +144,11 @@ class RSSHub:
         Returns:
             Parsed feed data or None if failed
         """
-        feed_url = feed_info["url"]
+        feed_url = feed_info.get("rss_url") or ""
+
+        if not feed_url:
+            print(f"ℹ️  No RSS URL for {feed_info['title']}, listing website only")
+            return None
 
         print(f"📡 Fetching: {feed_info['title']}")
 
@@ -168,57 +184,73 @@ class RSSHub:
         for feed_info in self.feeds:
             parsed_feed = self.fetch_feed(feed_info)
 
-            if parsed_feed and parsed_feed.entries:
-                # Get favicon URL first
+            feed_link = ""
+            feed_description = ""
+            feed_updated = ""
+            feed_updated_parsed = None
+            feed_language = "en"
+            feed_entries = []
+
+            if parsed_feed:
                 feed_link = safe_get_text(parsed_feed.feed, "link")
-                favicon_url = get_favicon_url(feed_info["url"], feed_link)
+                feed_description = safe_get_text(parsed_feed.feed, "description")
+                feed_updated = safe_get_text(parsed_feed.feed, "updated")
+                feed_updated_parsed = parsed_feed.feed.get("updated_parsed")
+                feed_language = safe_get_text(parsed_feed.feed, "language", "en")
+                feed_entries = parsed_feed.entries or []
 
-                # Process entries
-                for entry in parsed_feed.entries:
-                    # Add feed metadata to each entry
-                    entry["feed_title"] = feed_info["title"]
-                    entry["feed_url"] = feed_info["url"]
-                    entry["feed_category"] = feed_info.get("category", "")
-                    entry["feed_favicon_url"] = favicon_url
+            if not feed_link:
+                feed_link = feed_info.get("html_url") or feed_info.get("rss_url") or ""
 
-                self.all_entries.extend(parsed_feed.entries)
+            favicon_url = get_favicon_url(
+                feed_info.get("rss_url") or feed_info["url"],
+                feed_link,
+            )
 
-                # Find the most recent entry date for this feed
-                latest_entry_date = None
-                latest_entry_parsed = None
+            for entry in feed_entries:
+                # Add feed metadata to each entry
+                entry["feed_title"] = feed_info["title"]
+                entry["feed_url"] = feed_info["url"]
+                entry["feed_category"] = feed_info.get("category", "")
+                entry["feed_favicon_url"] = favicon_url
 
-                if parsed_feed.entries:
-                    # Sort entries by publication date to find the latest
-                    sorted_entries = sorted(
-                        parsed_feed.entries,
-                        key=lambda x: x.get("published_parsed") or (0,),
-                        reverse=True,
-                    )
-                    if sorted_entries:
-                        latest_entry = sorted_entries[0]
-                        latest_entry_date = safe_get_text(latest_entry, "published")
-                        latest_entry_parsed = latest_entry.get("published_parsed")
+            self.all_entries.extend(feed_entries)
 
-                # Store feed metadata
-                feed_meta = {
-                    "title": feed_info["title"],
-                    "url": feed_info["url"],
-                    "category": feed_info.get("category", ""),
-                    "link": feed_link,
-                    "description": safe_get_text(parsed_feed.feed, "description"),
-                    "updated": safe_get_text(parsed_feed.feed, "updated"),
-                    "updated_parsed": parsed_feed.feed.get("updated_parsed"),
-                    "latest_post_date": latest_entry_date,  # Most recent post date
-                    "latest_post_parsed": latest_entry_parsed,  # Parsed version for sorting
-                    "entry_count": len(parsed_feed.entries),
-                    "language": safe_get_text(parsed_feed.feed, "language", "en"),
-                    "favicon_url": favicon_url,  # Add favicon URL
-                }
-                self.feeds_with_updates.append(feed_meta)
+            # Find the most recent entry date for this feed
+            latest_entry_date = None
+            latest_entry_parsed = None
+            if feed_entries:
+                sorted_entries = sorted(
+                    feed_entries,
+                    key=lambda x: x.get("published_parsed") or (0,),
+                    reverse=True,
+                )
+                if sorted_entries:
+                    latest_entry = sorted_entries[0]
+                    latest_entry_date = safe_get_text(latest_entry, "published")
+                    latest_entry_parsed = latest_entry.get("published_parsed")
+
+            feed_meta = {
+                "title": feed_info["title"],
+                "url": feed_info["url"],
+                "rss_url": feed_info.get("rss_url", ""),
+                "html_url": feed_info.get("html_url", ""),
+                "category": feed_info.get("category", ""),
+                "link": feed_link,
+                "description": feed_description,
+                "updated": feed_updated,
+                "updated_parsed": feed_updated_parsed,
+                "latest_post_date": latest_entry_date,
+                "latest_post_parsed": latest_entry_parsed,
+                "entry_count": len(feed_entries),
+                "language": feed_language,
+                "favicon_url": favicon_url,
+                "has_rss": bool(feed_info.get("rss_url")),
+            }
+            self.feeds_with_updates.append(feed_meta)
 
         if not self.all_entries:
-            print("❌ No entries found in any feeds")
-            sys.exit(1)
+            print("⚠️  No entries found in feeds. Generating site with feed links only.")
 
         print(f"📰 Total entries collected: {len(self.all_entries)}")
 
@@ -369,7 +401,7 @@ class RSSHub:
         )
 
         latest_entries = []
-        for entry in sorted_entries[:9]:
+        for entry in sorted_entries:
             entry_copy = entry.copy()
             entry_copy["published_parsed"] = serialize_parsed_time(
                 entry.get("published_parsed")

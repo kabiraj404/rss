@@ -39,7 +39,7 @@
 
     <!-- photos -->
     <outline category="Photogenic" text="The Atlantic Photo of the Week" title="The Atlantic Photo of the Week" xmlUrl="https://www.theatlantic.com/feed/photography/" htmlUrl="https://www.theatlantic.com/photography/"/>
-    <outline category="Photogenic" text="Magnum Photos" title="Magnum Photos" xmlUrl="https://www.magnumphotos.com//feed" htmlUrl="https://www.magnumphotos.com/"/>
+    <outline category="Photogenic" text="Magnum Photos" title="Magnum Photos" xmlUrl="https://www.magnumphotos.com//feed/" htmlUrl="https://www.magnumphotos.com/"/>
     <outline category="Photogenic" text="David duChemin " title="David duChemin" type="application/rss+xml"  xmlUrl="https://davidduchemin.com/feed/" htmlUrl="https://davidduchemin.com/"/>
     <outline category="Photogenic" text="121 clicks blog" title="121 clicks blog" xmlUrl="https://121clicks.com/feed" htmlUrl="https://121clicks.com/"/>
 

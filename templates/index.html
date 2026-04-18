@@ -63,16 +63,6 @@
                     </h2>
                 </div>
 
-                <section class="latest-articles-section mb-5">
-                    <div class="section-heading d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
-                        <h2 class="mb-0">Latest 10 Articles</h2>
-                        <p class="latest-articles-note mb-0 text-muted">
-                            Across every feed, sorted newest first.
-                        </p>
-                    </div>
-                    <div id="latest-articles-grid" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3"></div>
-                </section>
-
                 <div id="category-tabs-container">
                     <!-- Category tabs will be injected here -->
                 </div>
@@ -163,18 +153,6 @@
                 document.getElementById("total-feeds").textContent =
                     data.total_feeds;
 
-                const latestArticlesGrid = document.getElementById(
-                    "latest-articles-grid",
-                );
-                if (latestArticlesGrid) {
-                    latestArticlesGrid.innerHTML =
-                        data.latest_entries && data.latest_entries.length
-                            ? data.latest_entries
-                                  .map((entry) => createLatestArticleCard(entry))
-                                  .join("")
-                            : '<div class="col"><div class="alert alert-secondary mb-0">No articles available.</div></div>';
-                }
-
                 // Render feeds
                 const categoryTabsContainer = document.getElementById(
                     "category-tabs-container",
@@ -192,6 +170,9 @@
                     tabsUl.innerHTML = `
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true">All</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="latest-articles-tab" data-bs-toggle="tab" data-bs-target="#latestarticles" type="button" role="tab" aria-controls="latestarticles" aria-selected="false">Latest Articles</button>
                     </li>
                 `;
                     Object.keys(data.categories).forEach((category) => {
@@ -224,6 +205,22 @@
                 allTabPane.setAttribute("aria-labelledby", "all-tab");
                 allTabPane.innerHTML = allFeedsHtml;
                 categoryTabsContent.appendChild(allTabPane);
+
+                // Latest Articles tab content
+                const latestArticlesPane = document.createElement("div");
+                latestArticlesPane.className = "tab-pane fade";
+                latestArticlesPane.id = "latestarticles";
+                latestArticlesPane.role = "tabpanel";
+                latestArticlesPane.setAttribute(
+                    "aria-labelledby",
+                    "latest-articles-tab",
+                );
+                latestArticlesPane.innerHTML = data.latest_entries && data.latest_entries.length
+                    ? `<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">${data.latest_entries
+                          .map((entry) => createLatestArticleCard(entry))
+                          .join("")}</div>`
+                    : '<div class="alert alert-secondary mb-0">No articles available.</div>';
+                categoryTabsContent.appendChild(latestArticlesPane);
 
                 // Content for each category
                 Object.keys(data.categories).forEach((category) => {
@@ -263,15 +260,28 @@
             ) {
                 const entries = entries_by_feed[feed.url] || [];
                 let entriesHtml = '<ul class="list-group entry-list">';
-                entries.forEach((entry) => {
-                    entriesHtml += `
+                if (entries.length) {
+                    entries.forEach((entry) => {
+                        entriesHtml += `
                     <li class="list-group-item">
                         <a href="${entry.link}" target="_blank" rel="noopener noreferrer">${entry.title}</a>
                         <small class="text-muted d-block">${formatRelativeTime(entry.published_parsed)}</small>
                     </li>
                 `;
-                });
+                    });
+                } else {
+                    entriesHtml +=
+                        '<li class="list-group-item text-muted">No RSS entries available for this source.</li>';
+                }
                 entriesHtml += "</ul>";
+
+                const feedLink = feed.link || feed.html_url || feed.rss_url || "";
+                const websiteButton = feedLink
+                    ? `<p class="mb-3"><a href="${feedLink}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary">Visit Website</a></p>`
+                    : "";
+                const latestUpdateText = feed.latest_post_parsed
+                    ? `Updated ${formatRelativeTime(feed.latest_post_parsed)}`
+                    : "No recent RSS updates";
 
                 return `
                 <div class="accordion-item">
@@ -281,14 +291,14 @@
                             <span class="feed-name">${feed.title}</span>
                             ${feed.has_recent_update ? '<span class="badge bg-primary ms-2">New</span>' : ""}
                             <small class="text-muted ms-auto latest-update-text d-none d-md-inline-block">
-                                Updated ${formatRelativeTime(feed.latest_post_parsed)}
+                                ${latestUpdateText}
                             </small>
                         </button>
                     </h2>
                     <div id="collapse-${index}-${category}" class="accordion-collapse collapse" aria-labelledby="heading-${index}-${category}" data-bs-parent="#feeds-accordion-${category}">
                         <div class="accordion-body">
                             <p class="feed-description mb-3">${feed.description || "No description available."}</p>
-                            <p class="mb-3"><a href="${feed.link}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary">Visit Website</a></p>
+                            ${websiteButton}
                             ${entriesHtml}
                         </div>
                     </div>
