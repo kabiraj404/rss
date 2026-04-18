@@ -50,8 +50,8 @@
                 <h1 class="minimal-title">RSS from a few websites</h1>
                 <p class="minimal-meta mb-0">
                     Last updated: <span id="updated-time"></span>
-                    <span class="meta-sep">|</span>
-                    Next update in ~<span id="update-interval"></span> hours
+                    <!-- <span class="meta-sep">|</span>
+                    Next update in ~<span id="update-interval"></span> hours -->
                 </p>
             </header>
 
@@ -62,6 +62,16 @@
                         Feeds <span class="feed-count">(<span id="total-feeds"></span>)</span>
                     </h2>
                 </div>
+
+                <section class="latest-articles-section mb-5">
+                    <div class="section-heading d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+                        <h2 class="mb-0">Latest 50 Articles</h2>
+                        <p class="latest-articles-note mb-0 text-muted">
+                            Across every feed, sorted newest first.
+                        </p>
+                    </div>
+                    <div id="latest-articles-grid" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3"></div>
+                </section>
 
                 <div id="category-tabs-container">
                     <!-- Category tabs will be injected here -->
@@ -143,10 +153,27 @@
                 // Populate header
                 document.getElementById("updated-time").textContent =
                     data.updated_time;
-                document.getElementById("update-interval").textContent =
-                    data.update_interval_hours;
+                const updateIntervalElement = document.getElementById(
+                    "update-interval",
+                );
+                if (updateIntervalElement) {
+                    updateIntervalElement.textContent =
+                        data.update_interval_hours;
+                }
                 document.getElementById("total-feeds").textContent =
                     data.total_feeds;
+
+                const latestArticlesGrid = document.getElementById(
+                    "latest-articles-grid",
+                );
+                if (latestArticlesGrid) {
+                    latestArticlesGrid.innerHTML =
+                        data.latest_entries && data.latest_entries.length
+                            ? data.latest_entries
+                                  .map((entry) => createLatestArticleCard(entry))
+                                  .join("")
+                            : '<div class="col"><div class="alert alert-secondary mb-0">No articles available.</div></div>';
+                }
 
                 // Render feeds
                 const categoryTabsContainer = document.getElementById(
@@ -265,6 +292,33 @@
                             ${entriesHtml}
                         </div>
                     </div>
+                </div>
+            `;
+            }
+
+            function createLatestArticleCard(entry) {
+                const excerpt = truncateText(
+                    cleanHtml(entry.summary || entry.description || ""),
+                    180,
+                );
+                const feedName = entry.feed_title || "Latest Feed";
+                const feedFavicon = entry.feed_favicon_url || "";
+
+                return `
+                <div class="col">
+                    <article class="article-card h-100">
+                        <div class="article-card-body">
+                            <div class="article-source mb-2">
+                                ${feedFavicon ? `<img src="${feedFavicon}" alt="" width="16" height="16" class="rounded">` : ""}
+                                <span>${feedName}</span>
+                            </div>
+                            <h3 class="article-title">
+                                <a href="${entry.link}" target="_blank" rel="noopener noreferrer">${entry.title}</a>
+                            </h3>
+                            <p class="article-meta mb-2 text-muted">${formatRelativeTime(entry.published_parsed)}</p>
+                            ${excerpt ? `<p class="article-excerpt mb-0">${excerpt}</p>` : ""}
+                        </div>
+                    </article>
                 </div>
             `;
             }

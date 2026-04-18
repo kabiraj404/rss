@@ -30,8 +30,8 @@
     <outline category="Randomly" text="Incremental forgetting" title="Incremental forgetting" xmlUrl="https://blog.incrementalforgetting.tech/feed" htmlUrl="https://blog.incrementalforgetting.tech"/>
     <outline category="Randomly" text="Aeon | a world of ideas" title="Aeon | a world of ideas" xmlUrl="https://aeon.co/feed" htmlUrl="https://aeon.co"/>
     <outline category="Randomly" text="Arts &#38; Letters Daily" title="Arts &#38; Letters Daily" type="rss" xmlUrl="https://www.aldaily.com/feed" htmlUrl="https://www.aldaily.com/"/>
-    <outline category="Randomly" text="The nexus" title="The nexus" type="rss" xmlUrl="https://www.thenexus.media/rss/" htmlUrl="https://www.thenexus.media/"/>
-    <outline category="Randomly" text="Permanent Style" title="Permanent Style" xmlUrl="https://www.permanentstyle.com/feed" htmlUrl="https://www.permanentstyle.com/"/>
+    <!-- <outline category="Randomly" text="The nexus" title="The nexus" type="rss" xmlUrl="https://www.thenexus.media/rss/" htmlUrl="https://www.thenexus.media/"/> -->
+    <!-- <outline category="Randomly" text="Permanent Style" title="Permanent Style" xmlUrl="https://www.permanentstyle.com/feed" htmlUrl="https://www.permanentstyle.com/"/> -->
     <outline category="Randomly" text="The MIT Press Reader" title="The MIT Press Reader" xmlUrl="https://thereader.mitpress.mit.edu/feed/" htmlUrl="https://thereader.mitpress.mit.edu/"/>
     <outline category="Randomly" text="The Criterion Collection" title="The Criterion Collection" xmlUrl="https://www.criterion.com/feeds/current" htmlUrl="https://www.criterion.com"/>
     <outline category="Randomly" text="XKCD" title="XKCD" type="rss" xmlUrl="https://xkcd.com/atom.xml" htmlUrl="https://xkcd.com/"/>
@@ -39,13 +39,13 @@
 
     <!-- photos -->
     <outline category="Photogenic" text="The Atlantic Photo of the Week" title="The Atlantic Photo of the Week" xmlUrl="https://www.theatlantic.com/feed/photography/" htmlUrl="https://www.theatlantic.com/photography/"/>
-    <outline category="Photogenic" text="Magnum Photos" title="Magnum Photos" xmlUrl="https://www.magnumphotos.com/feed/" htmlUrl="https://www.magnumphotos.com/"/>
+    <outline category="Photogenic" text="Magnum Photos" title="Magnum Photos" xmlUrl="https://www.magnumphotos.com//feed" htmlUrl="https://www.magnumphotos.com/"/>
     <outline category="Photogenic" text="David duChemin " title="David duChemin" type="application/rss+xml"  xmlUrl="https://davidduchemin.com/feed/" htmlUrl="https://davidduchemin.com/"/>
     <outline category="Photogenic" text="121 clicks blog" title="121 clicks blog" xmlUrl="https://121clicks.com/feed" htmlUrl="https://121clicks.com/"/>
 
 
     <!-- news_pod -->
-    <outline category="Periodicals" text="NYT The Daily" title="NYT The Daily" xmlUrl="https://feeds.simplecast.com/54nAGcIl" htmlUrl="https://www.nytimes.com/column/the-daily"/>
+    <!-- <outline category="Periodicals" text="NYT The Daily" title="NYT The Daily" xmlUrl="https://feeds.simplecast.com/54nAGcIl" htmlUrl="https://www.nytimes.com/column/the-daily"/> -->
     <outline category="Periodicals" text="This American Life" title="This American Life" xmlUrl="https://www.thisamericanlife.org/podcast/rss.xml" htmlUrl="https://www.thisamericanlife.org/"/>
     <outline category="Periodicals" text="Not Boring" title="Not Boring" xmlUrl="https://www.notboring.co/feed" htmlUrl="https://www.notboring.co/"/>
     <outline category="Periodicals" text="NYT magazine" title="NYT magazine" xmlUrl="https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/magazine/rss.xml" htmlUrl="https://www.nytimes.com/section/magazine"/>

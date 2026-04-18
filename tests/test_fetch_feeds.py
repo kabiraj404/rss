@@ -137,3 +137,11 @@ def test_generate_html(hub):
         assert "<title>Test Site</title>" in content
         assert "Test Site" in content
         assert "Test Description" in content
+        assert "Latest 50 Articles" in content
+
+
+def test_generate_site_data_includes_latest_entries(hub):
+    site_data = hub.generate_site_data()
+    assert "latest_entries" in site_data
+    assert len(site_data["latest_entries"]) == 2
+    assert site_data["latest_entries"][0]["title"] == "Entry 1"

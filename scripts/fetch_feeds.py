@@ -368,6 +368,14 @@ class RSSHub:
             reverse=True,
         )
 
+        latest_entries = []
+        for entry in sorted_entries[:50]:
+            entry_copy = entry.copy()
+            entry_copy["published_parsed"] = serialize_parsed_time(
+                entry.get("published_parsed")
+            )
+            latest_entries.append(entry_copy)
+
         # Sort feeds by update time (using latest post date)
         sorted_feeds = sorted(
             self.feeds_with_updates,
@@ -449,6 +457,7 @@ class RSSHub:
         data = {
             "title": self.config["site_title"],
             "description": self.config["site_description"],
+            "latest_entries": latest_entries,
             "feeds": feeds_data,
             "categories": categories_data,
             "entries_by_feed": entries_by_feed_data,
