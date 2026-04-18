@@ -369,7 +369,7 @@ class RSSHub:
         )
 
         latest_entries = []
-        for entry in sorted_entries[:50]:
+        for entry in sorted_entries[:9]:
             entry_copy = entry.copy()
             entry_copy["published_parsed"] = serialize_parsed_time(
                 entry.get("published_parsed")
