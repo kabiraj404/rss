@@ -169,10 +169,7 @@
 
                     tabsUl.innerHTML = `
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true">All</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="latest-articles-tab" data-bs-toggle="tab" data-bs-target="#latestarticles" type="button" role="tab" aria-controls="latestarticles" aria-selected="false">Latest Articles</button>
+                        <button class="nav-link active" id="latest-articles-tab" data-bs-toggle="tab" data-bs-target="#latestarticles" type="button" role="tab" aria-controls="latestarticles" aria-selected="true">Latest Articles</button>
                     </li>
                 `;
                     Object.keys(data.categories).forEach((category) => {
@@ -182,6 +179,11 @@
                         </li>
                     `;
                     });
+                    tabsUl.innerHTML += `
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="false">All</button>
+                    </li>
+                `;
                     categoryTabsContainer.appendChild(tabsUl);
                 }
 
@@ -199,26 +201,45 @@
                 allFeedsHtml += "</div>";
 
                 const allTabPane = document.createElement("div");
-                allTabPane.className = "tab-pane fade show active";
+                allTabPane.className = "tab-pane fade";
                 allTabPane.id = "all";
                 allTabPane.role = "tabpanel";
                 allTabPane.setAttribute("aria-labelledby", "all-tab");
                 allTabPane.innerHTML = allFeedsHtml;
-                categoryTabsContent.appendChild(allTabPane);
-
                 // Latest Articles tab content
                 const latestArticlesPane = document.createElement("div");
-                latestArticlesPane.className = "tab-pane fade";
+                latestArticlesPane.className = "tab-pane fade show active";
                 latestArticlesPane.id = "latestarticles";
                 latestArticlesPane.role = "tabpanel";
                 latestArticlesPane.setAttribute(
                     "aria-labelledby",
                     "latest-articles-tab",
                 );
-                latestArticlesPane.innerHTML = data.latest_entries && data.latest_entries.length
-                    ? `<div class="latest-articles-list">${data.latest_entries
-                          .map((entry) => createLatestArticleCard(entry))
-                          .join("<br>")}</div>`
+                latestArticlesPane.innerHTML = data.latest_entries_by_day &&
+                    Object.keys(data.latest_entries_by_day).length
+                    ? `<div class="latest-articles-list">${Object.entries(
+                          data.latest_entries_by_day,
+                      )
+                          .map(
+                              ([day, categories]) => `
+                              <section class="latest-articles-day mb-4">
+                                  <h3 class="h5">${day}</h3>
+                                  ${Object.entries(categories)
+                                      .map(
+                                          ([category, entries]) => `
+                                          <div class="latest-articles-category mb-3">
+                                              <h4 class="h6 text-muted">${category}</h4>
+                                              ${entries
+                                                  .map((entry) => createLatestArticleCard(entry))
+                                                  .join("<br>")}
+                                          </div>
+                                      `,
+                                      )
+                                      .join("")}
+                              </section>
+                          `,
+                          )
+                          .join("")}</div>`
                     : '<div class="alert alert-secondary mb-0">No articles available.</div>';
                 categoryTabsContent.appendChild(latestArticlesPane);
 
@@ -250,6 +271,8 @@
                     categoryTabPane.innerHTML = categoryFeedsHtml;
                     categoryTabsContent.appendChild(categoryTabPane);
                 });
+
+                categoryTabsContent.appendChild(allTabPane);
             }
 
             function createFeedAccordionItem(

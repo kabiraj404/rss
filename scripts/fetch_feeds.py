@@ -7,6 +7,7 @@ Fetch and process RSS feeds from OPML file
 import json
 import os
 import sys
+import calendar
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -387,26 +388,70 @@ class RSSHub:
 
         import time
         from datetime import datetime, timezone
+        from dateutil import parser
 
         def serialize_parsed_time(parsed_time):
             if not parsed_time:
                 return None
-            return datetime.fromtimestamp(time.mktime(parsed_time)).isoformat()
+            return datetime.fromtimestamp(
+                calendar.timegm(parsed_time), timezone.utc
+            ).isoformat()
 
-        # Sort entries by date
+        def entry_datetime(entry):
+            parsed_time = entry.get("published_parsed")
+            if parsed_time:
+                return datetime.fromtimestamp(
+                    calendar.timegm(parsed_time), timezone.utc
+                )
+
+            published = entry.get("published") or entry.get("updated")
+            if published:
+                try:
+                    parsed_date = parser.parse(published)
+                    if parsed_date.tzinfo is None:
+                        parsed_date = parsed_date.replace(tzinfo=timezone.utc)
+                    return parsed_date.astimezone(timezone.utc)
+                except (TypeError, ValueError, OverflowError):
+                    pass
+            return None
+
+        entries_by_day_and_category = {}
         sorted_entries = sorted(
             self.all_entries,
-            key=lambda x: x.get("published_parsed") or (0,),
+            key=lambda entry: (
+                entry_datetime(entry).timestamp()
+                if entry_datetime(entry)
+                else float("-inf")
+            ),
             reverse=True,
         )
+        for entry in sorted_entries:
+            entry_date = entry_datetime(entry)
+            day = entry_date.date().isoformat() if entry_date else "Unknown date"
+            category = entry.get("feed_category") or "Uncategorized"
+            entries_by_day_and_category.setdefault(day, {}).setdefault(
+                category, []
+            ).append(entry)
 
         latest_entries = []
-        for entry in sorted_entries:
-            entry_copy = entry.copy()
-            entry_copy["published_parsed"] = serialize_parsed_time(
-                entry.get("published_parsed")
-            )
-            latest_entries.append(entry_copy)
+        latest_entries_by_day = {}
+        for day in sorted(
+            entries_by_day_and_category,
+            key=lambda value: value if value != "Unknown date" else "",
+            reverse=True,
+        ):
+            latest_entries_by_day[day] = {}
+            for category in sorted(entries_by_day_and_category[day]):
+                selected_entries = entries_by_day_and_category[day][category][:10]
+                serialized_entries = []
+                for entry in selected_entries:
+                    entry_copy = entry.copy()
+                    entry_copy["published_parsed"] = serialize_parsed_time(
+                        entry.get("published_parsed")
+                    )
+                    serialized_entries.append(entry_copy)
+                latest_entries_by_day[day][category] = serialized_entries
+                latest_entries.extend(serialized_entries)
 
         # Sort feeds by update time (using latest post date)
         sorted_feeds = sorted(
@@ -490,6 +535,7 @@ class RSSHub:
             "title": self.config["site_title"],
             "description": self.config["site_description"],
             "latest_entries": latest_entries,
+            "latest_entries_by_day": latest_entries_by_day,
             "feeds": feeds_data,
             "categories": categories_data,
             "entries_by_feed": entries_by_feed_data,
@@ -521,7 +567,7 @@ class RSSHub:
 
 def main():
     """Main function to process all feeds."""
-    print("🌟 lovelyRSS - Personal RSS Hub")
+    print("Personal RSS Hub")
     print("=" * 40)
 
     # Initialize RSS hub

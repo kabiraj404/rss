@@ -166,3 +166,45 @@ def test_generate_site_data_includes_latest_entries(hub):
     assert "latest_entries" in site_data
     assert len(site_data["latest_entries"]) == 2
     assert site_data["latest_entries"][0]["title"] == "Entry 1"
+
+
+def test_latest_articles_keep_ten_per_category_per_day(hub):
+    entries = []
+    for day in ("2023-10-27", "2023-10-26"):
+        for category in ("Technology", "News"):
+            for index in range(12):
+                entries.append(
+                    feedparser.FeedParserDict(
+                        {
+                            "title": f"{category} {day} {index}",
+                            "link": f"http://example.com/{day}/{category}/{index}",
+                            "published": f"{day}T{index:02d}:00:00Z",
+                            "published_parsed": (
+                                int(day[:4]),
+                                int(day[5:7]),
+                                int(day[8:10]),
+                                index,
+                                0,
+                                0,
+                                0,
+                                0,
+                                0,
+                            ),
+                            "feed_category": category,
+                            "feed_title": category,
+                        }
+                    )
+                )
+    hub.all_entries = entries
+
+    site_data = hub.generate_site_data()
+
+    assert set(site_data["latest_entries_by_day"]) == {"2023-10-27", "2023-10-26"}
+    assert all(
+        len(entries) == 10
+        for categories in site_data["latest_entries_by_day"].values()
+        for entries in categories.values()
+    )
+    assert site_data["latest_entries_by_day"]["2023-10-27"]["Technology"][0][
+        "title"
+    ] == "Technology 2023-10-27 11"

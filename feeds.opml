@@ -47,9 +47,9 @@
     <!-- news_pod -->
     <!-- <outline category="Periodicals" text="NYT The Daily" title="NYT The Daily" xmlUrl="https://feeds.simplecast.com/54nAGcIl" htmlUrl="https://www.nytimes.com/column/the-daily"/> -->
     <outline category="Periodicals" text="This American Life" title="This American Life" xmlUrl="https://www.thisamericanlife.org/podcast/rss.xml" htmlUrl="https://www.thisamericanlife.org/"/>
-    <outline category="Periodicals" text="Not Boring" title="Not Boring" xmlUrl="https://www.notboring.co/feed" htmlUrl="https://www.notboring.co/"/>
+    <outline category="Periodicals" text="Linkdump newsletter" title="Linkdump newsletter" xmlUrl="https://buttondown.com/ericwbailey/rss" htmlUrl="https://buttondown.com/ericwbailey"/>
     <outline category="Periodicals" text="NYT magazine" title="NYT magazine" xmlUrl="https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/magazine/rss.xml" htmlUrl="https://www.nytimes.com/section/magazine"/>
-    <outline category="Periodicals" text="News Minimalist" title="News Minimalist" xmlUrl="https://rss.beehiiv.com/feeds/4aF2pGVAEN.xml" htmlUrl="https://www.notboring.co/"/>
+    <!-- <outline category="Periodicals" text="News Minimalist" title="News Minimalist" xmlUrl="https://rss.beehiiv.com/feeds/4aF2pGVAEN.xml" htmlUrl="https://www.notboring.co/"/> -->
     <outline category="Periodicals" text="60 minutes" title="60 minutes" xmlUrl="https://www.cbsnews.com/latest/rss/60-minutes-full-episodes" htmlUrl="https://www.cbsnews.com/60-minutes/"/>
     <outline category="Periodicals" text="Best stories (HN)" title="Best stories (HN)"  type="application/rss+xml" xmlUrl="https://hnrss.org/best" htmlUrl="https://news.ycombinator.com/best"/>
     <outline category="Periodicals" text="TLDR" title="TLDR"  type="application/rss+xml" xmlUrl="https://tldr.tech/rss" htmlUrl="https://tldr.tech/"/>
