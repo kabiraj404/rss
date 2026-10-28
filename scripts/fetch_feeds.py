@@ -387,7 +387,7 @@ class RSSHub:
         """Generate a dictionary with all data needed for the HTML page."""
 
         import time
-        from datetime import datetime, timezone
+        from datetime import datetime, timedelta, timezone
         from dateutil import parser
 
         def serialize_parsed_time(parsed_time):
@@ -415,6 +415,7 @@ class RSSHub:
                     pass
             return None
 
+        first_included_day = datetime.now(timezone.utc).date() - timedelta(days=2)
         entries_by_day_and_category = {}
         sorted_entries = sorted(
             self.all_entries,
@@ -427,7 +428,9 @@ class RSSHub:
         )
         for entry in sorted_entries:
             entry_date = entry_datetime(entry)
-            day = entry_date.date().isoformat() if entry_date else "Unknown date"
+            if not entry_date or entry_date.date() < first_included_day:
+                continue
+            day = entry_date.date().isoformat()
             category = entry.get("feed_category") or "Uncategorized"
             entries_by_day_and_category.setdefault(day, {}).setdefault(
                 category, []

@@ -6,6 +6,7 @@ import feedparser
 import os
 import shutil
 import tempfile
+from datetime import datetime, timedelta, timezone
 import pytest
 
 
@@ -162,6 +163,14 @@ def test_generate_html(hub):
 
 
 def test_generate_site_data_includes_latest_entries(hub):
+    today = datetime.now(timezone.utc)
+    for index, entry in enumerate(hub.all_entries):
+        entry["published"] = (today - timedelta(days=index)).strftime(
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
+        entry["published_parsed"] = (
+            today - timedelta(days=index)
+        ).timetuple()
     site_data = hub.generate_site_data()
     assert "latest_entries" in site_data
     assert len(site_data["latest_entries"]) == 2
@@ -170,7 +179,9 @@ def test_generate_site_data_includes_latest_entries(hub):
 
 def test_latest_articles_keep_ten_per_category_per_day(hub):
     entries = []
-    for day in ("2023-10-27", "2023-10-26"):
+    today = datetime.now(timezone.utc).date()
+    days = [today - timedelta(days=offset) for offset in (0, 1)]
+    for day in days:
         for category in ("Technology", "News"):
             for index in range(12):
                 entries.append(
@@ -180,9 +191,9 @@ def test_latest_articles_keep_ten_per_category_per_day(hub):
                             "link": f"http://example.com/{day}/{category}/{index}",
                             "published": f"{day}T{index:02d}:00:00Z",
                             "published_parsed": (
-                                int(day[:4]),
-                                int(day[5:7]),
-                                int(day[8:10]),
+                                day.year,
+                                day.month,
+                                day.day,
                                 index,
                                 0,
                                 0,
@@ -199,12 +210,41 @@ def test_latest_articles_keep_ten_per_category_per_day(hub):
 
     site_data = hub.generate_site_data()
 
-    assert set(site_data["latest_entries_by_day"]) == {"2023-10-27", "2023-10-26"}
+    assert set(site_data["latest_entries_by_day"]) == {
+        day.isoformat() for day in days
+    }
     assert all(
         len(entries) == 10
         for categories in site_data["latest_entries_by_day"].values()
         for entries in categories.values()
     )
-    assert site_data["latest_entries_by_day"]["2023-10-27"]["Technology"][0][
-        "title"
-    ] == "Technology 2023-10-27 11"
+    assert site_data["latest_entries_by_day"][days[0].isoformat()]["Technology"][
+        0
+    ]["title"] == f"Technology {days[0]} 11"
+
+
+def test_latest_articles_exclude_entries_older_than_three_days(hub):
+    now = datetime.now(timezone.utc)
+    today = now.date()
+    included_date = now - timedelta(days=2)
+    hub.all_entries = [
+        feedparser.FeedParserDict(
+            {
+                "title": "Included",
+                "published_parsed": included_date.timetuple(),
+                "feed_category": "News",
+            }
+        ),
+        feedparser.FeedParserDict(
+            {
+                "title": "Excluded",
+                "published": (today - timedelta(days=3)).isoformat(),
+                "feed_category": "News",
+            }
+        ),
+    ]
+
+    site_data = hub.generate_site_data()
+
+    assert "Included" in [entry["title"] for entry in site_data["latest_entries"]]
+    assert "Excluded" not in [entry["title"] for entry in site_data["latest_entries"]]
