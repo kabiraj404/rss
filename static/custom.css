@@ -1,10 +1,11 @@
 :root {
-    --background: #ffffff;
-    --surface: #fafafa;
+    --background: #f7f7f5;
+    --surface: #ffffff;
     --text: #202124;
-    --muted: #6b7280;
-    --border: #e5e7eb;
-    --accent: #111827;
+    --muted: #70747b;
+    --border: #e3e3df;
+    --accent: #171717;
+    --soft-accent: #ecece8;
 }
 
 html,
@@ -20,22 +21,24 @@ body {
 }
 
 .container {
-    max-width: 900px;
+    max-width: 960px;
     min-height: calc(100vh - 74px);
-    padding-top: 3rem;
+    padding-top: 4.5rem;
+    padding-bottom: 3rem;
 }
 
 .minimal-header {
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 1.25rem;
+    max-width: 42rem;
+    padding-bottom: 1.75rem;
 }
 
 .minimal-title {
-    margin: 0 0 0.35rem;
+    margin: 0 0 0.55rem;
     font-family: "Space Grotesk", sans-serif;
-    font-size: 1.25rem;
-    font-weight: 500;
-    letter-spacing: -0.02em;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 1.1;
 }
 
 .minimal-meta,
@@ -45,11 +48,15 @@ body {
 }
 
 .minimal-meta {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
 }
 
 .section-heading {
-    margin-bottom: 1rem !important;
+    align-items: baseline;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.25rem !important;
 }
 
 .section-heading h2 {
@@ -67,10 +74,15 @@ body {
 .feed-tabs {
     display: flex;
     gap: 1.25rem;
-    margin-bottom: 2rem !important;
+    margin-bottom: 1.75rem !important;
     overflow-x: auto;
     border-bottom: 1px solid var(--border);
     flex-wrap: nowrap;
+    scrollbar-width: none;
+}
+
+.feed-tabs::-webkit-scrollbar {
+    display: none;
 }
 
 .feed-tabs .nav-item {
@@ -82,8 +94,9 @@ body {
     border-bottom: 2px solid transparent !important;
     border-radius: 0 !important;
     color: var(--muted) !important;
-    padding: 0.65rem 0 0.7rem;
+    padding: 0.65rem 0 0.8rem;
     white-space: nowrap;
+    transition: color 160ms ease, border-color 160ms ease;
 }
 
 .feed-tabs .nav-link:hover,
@@ -100,7 +113,8 @@ body {
 
 .latest-articles-day {
     border-bottom: 1px solid var(--border);
-    padding-bottom: 1.5rem;
+    padding-bottom: 1.75rem;
+    margin-bottom: 1.75rem;
 }
 
 .latest-articles-day:last-child {
@@ -108,7 +122,8 @@ body {
 }
 
 .latest-articles-day h3 {
-    margin-bottom: 1rem;
+    color: var(--muted);
+    margin-bottom: 0.85rem;
     font-size: 0.95rem;
     font-weight: 600;
 }
@@ -124,6 +139,8 @@ body {
 .latest-articles-category a {
     color: var(--text);
     text-decoration: none;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
 }
 
 .latest-articles-category a:hover,
@@ -132,24 +149,33 @@ body {
 }
 
 .accordion-item {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.65rem;
     overflow: hidden;
     border: 1px solid var(--border) !important;
-    border-radius: 0.25rem !important;
-    background: var(--background) !important;
+    border-radius: 0.5rem !important;
+    background: var(--surface) !important;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.accordion-item:has(.accordion-button:not(.collapsed)) {
+    border-color: #c9c9c4 !important;
+    box-shadow: 0 8px 24px rgba(23, 23, 23, 0.05);
 }
 
 .accordion-button {
-    padding: 0.8rem 1rem;
-    background: var(--background) !important;
+    min-height: 3.25rem;
+    padding: 0.85rem 1rem;
+    background: var(--surface) !important;
     color: var(--text) !important;
     font-size: 0.95rem;
     font-weight: 500 !important;
     box-shadow: none !important;
+    transition: background-color 160ms ease;
 }
 
 .accordion-button:not(.collapsed) {
     color: var(--text) !important;
+    background: var(--soft-accent) !important;
 }
 
 .accordion-button:focus {
@@ -159,7 +185,7 @@ body {
 .accordion-body {
     border-top: 1px solid var(--border) !important;
     background: var(--surface) !important;
-    padding: 1rem;
+    padding: 1.15rem 1.15rem 1.25rem;
 }
 
 .feed-name {
@@ -172,13 +198,14 @@ body {
 .feed-description {
     color: var(--muted);
     font-size: 0.9rem;
+    line-height: 1.55;
 }
 
 .entry-list .list-group-item {
     border: 0 !important;
     border-top: 1px solid var(--border) !important;
     background: transparent !important;
-    padding: 0.7rem 0;
+    padding: 0.8rem 0;
 }
 
 .entry-list .list-group-item:first-child {
@@ -189,6 +216,8 @@ body {
     color: var(--text) !important;
     font-size: 0.9rem;
     text-decoration: none !important;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
 }
 
 .entry-list a:hover,
@@ -198,7 +227,8 @@ body {
 
 .btn-outline-primary {
     border-color: var(--border) !important;
-    border-radius: 0.25rem !important;
+    border-radius: 999px !important;
+    padding: 0.35rem 0.75rem;
     color: var(--text) !important;
     font-size: 0.8rem;
 }
@@ -220,7 +250,8 @@ body {
 .site-footer {
     border-top: 1px solid var(--border);
     color: var(--muted) !important;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    padding-bottom: 1.5rem !important;
 }
 
 .site-footer a {
@@ -235,7 +266,7 @@ body {
 
 @media (max-width: 767.98px) {
     .container {
-        padding-top: 2rem;
+        padding: 2.5rem 1rem 2rem;
     }
 
     .feed-tabs {
@@ -244,5 +275,13 @@ body {
 
     .feed-name {
         max-width: 58%;
+    }
+
+    .latest-update-text {
+        display: none !important;
+    }
+
+    .accordion-body {
+        padding: 1rem;
     }
 }
