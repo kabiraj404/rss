@@ -211,6 +211,13 @@ class RSSHub:
                         and entry.get("updated_parsed")
                     ):
                         entry["published_parsed"] = entry["updated_parsed"]
+                    if not entry.get("published") and feed_updated:
+                        entry["published"] = feed_updated
+                    if (
+                        not entry.get("published_parsed")
+                        and feed_updated_parsed
+                    ):
+                        entry["published_parsed"] = feed_updated_parsed
 
             if not feed_link:
                 feed_link = feed_info.get("html_url") or feed_info.get("rss_url") or ""

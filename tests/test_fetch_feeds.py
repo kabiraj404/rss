@@ -178,6 +178,59 @@ def test_process_feeds_uses_updated_date_when_published_date_is_missing(
     assert hub.feeds_with_updates[0]["latest_post_date"] == "2026-11-05T07:00:13Z"
 
 
+def test_process_feeds_uses_feed_date_for_entries_without_dates(hub, monkeypatch):
+    feed_updated_parsed = (
+        2026,
+        11,
+        6,
+        16,
+        59,
+        49,
+        4,
+        310,
+        0,
+    )
+    parsed_feed = feedparser.FeedParserDict(
+        {
+            "feed": {
+                "title": "Arts & Letters Daily",
+                "updated": "Fri, 06 Nov 2026 16:59:49 -0000",
+                "updated_parsed": feed_updated_parsed,
+            },
+            "entries": [
+                {
+                    "title": "An undated article",
+                    "link": "https://example.com/article",
+                }
+            ],
+        }
+    )
+    hub.feeds = [
+        {
+            "title": "Arts & Letters Daily",
+            "url": "https://example.com/feed",
+            "rss_url": "https://example.com/feed",
+            "html_url": "https://example.com/",
+            "category": "Randomly",
+        }
+    ]
+    monkeypatch.setattr(hub, "parse_opml", lambda: hub.feeds)
+    monkeypatch.setattr(hub, "fetch_feed", lambda feed_info: parsed_feed)
+    monkeypatch.setattr(
+        "scripts.fetch_feeds.get_favicon_url",
+        lambda feed_url, feed_link: None,
+    )
+    hub.all_entries = []
+    hub.feeds_with_updates = []
+
+    hub.process_feeds()
+
+    entry = hub.all_entries[0]
+    assert entry["published"] == "Fri, 06 Nov 2026 16:59:49 -0000"
+    assert entry["published_parsed"] == feed_updated_parsed
+    assert hub.feeds_with_updates[0]["latest_post_date"] == entry["published"]
+
+
 def test_generate_latest_rss(hub):
     hub.generate_latest_rss()
     rss_file = hub.config["output_files"]["rss"]
