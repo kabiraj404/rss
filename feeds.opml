@@ -22,6 +22,7 @@
     <outline category="Somone_cool" text="Roger Ebert" title="Roger Ebert (film critic)" xmlUrl="https://www.rogerebert.com/feed" htmlUrl="https://www.rogerebert.com"/>
     <outline category="Somone_cool" text="Judith Curry" title="Judith Curry (climate etc)" xmlUrl="https://judithcurry.com/feed/" htmlUrl="https://judithcurry.com/"/>
     <outline category="Somone_cool" text="Shane Parrish" title="Shane Parrish (farnam street)" xmlUrl="https://www.farnamstreetblog.com/feed/" htmlUrl="https://fs.blog/"/>
+    <outline category="Somone_cool" text="Dynomight" title="Dynomight (math n random rant)" xmlUrl="https://dynomight.net/feed.xml" htmlUrl="https://dynomight.net/"/>
 
 
     <!-- Randomly -->
@@ -35,6 +36,7 @@
     <outline category="Randomly" text="The MIT Press Reader" title="The MIT Press Reader" xmlUrl="https://thereader.mitpress.mit.edu/feed/" htmlUrl="https://thereader.mitpress.mit.edu/"/>
     <outline category="Randomly" text="The Criterion Collection" title="The Criterion Collection" xmlUrl="https://www.criterion.com/feeds/current" htmlUrl="https://www.criterion.com"/>
     <outline category="Randomly" text="XKCD" title="XKCD" type="rss" xmlUrl="https://xkcd.com/atom.xml" htmlUrl="https://xkcd.com/"/>
+    <outline category="Randomly" text="Cronicle of Higher Education" title="Cronicle of Higher Education" type="rss" xmlUrl="https://www.chronicle.com/index.atom" htmlUrl="https://www.chronicle.com/"/>
 
 
     <!-- photos -->

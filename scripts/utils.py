@@ -223,7 +223,10 @@ def fetch_with_retry(url: str, timeout: int = 10, retries: int = 3) -> Optional[
     }
 
 
-    headers['Accept'] = 'application/atom+xml'
+    headers['Accept'] = (
+        'application/rss+xml, application/atom+xml, application/xml, '
+        'text/xml;q=0.9, */*;q=0.8'
+    )
 
     for attempt in range(retries):
         try:

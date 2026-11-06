@@ -200,6 +200,18 @@ class RSSHub:
                 feed_language = safe_get_text(parsed_feed.feed, "language", "en")
                 feed_entries = parsed_feed.entries or []
 
+                # Atom feeds commonly expose only updated/updated_parsed for
+                # entries. Normalize that equivalent publication date so all
+                # output formats can sort and display those entries.
+                for entry in feed_entries:
+                    if not entry.get("published") and entry.get("updated"):
+                        entry["published"] = entry["updated"]
+                    if (
+                        not entry.get("published_parsed")
+                        and entry.get("updated_parsed")
+                    ):
+                        entry["published_parsed"] = entry["updated_parsed"]
+
             if not feed_link:
                 feed_link = feed_info.get("html_url") or feed_info.get("rss_url") or ""
 

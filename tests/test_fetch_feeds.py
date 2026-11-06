@@ -125,6 +125,59 @@ def test_parse_opml_includes_html_only_sources(tmp_path, config_file):
     assert feeds[0]["html_url"] == "https://www.magnumphotos.com/"
 
 
+def test_process_feeds_uses_updated_date_when_published_date_is_missing(
+    hub, monkeypatch
+):
+    parsed_feed = feedparser.FeedParserDict(
+        {
+            "feed": {"title": "Science weekly"},
+            "entries": [
+                {
+                    "title": "An updated article",
+                    "link": "https://example.com/article",
+                    "updated": "2026-11-05T07:00:13Z",
+                    "updated_parsed": (
+                        2026,
+                        11,
+                        5,
+                        7,
+                        0,
+                        13,
+                        3,
+                        309,
+                        0,
+                    ),
+                }
+            ],
+        }
+    )
+    hub.feeds = [
+        {
+            "title": "Science weekly",
+            "url": "https://example.com/feed.xml",
+            "rss_url": "https://example.com/feed.xml",
+            "html_url": "https://example.com/",
+            "category": "Data_science",
+        }
+    ]
+    monkeypatch.setattr(hub, "parse_opml", lambda: hub.feeds)
+    monkeypatch.setattr(hub, "fetch_feed", lambda feed_info: parsed_feed)
+    monkeypatch.setattr(
+        "scripts.fetch_feeds.get_favicon_url",
+        lambda feed_url, feed_link: None,
+    )
+    hub.all_entries = []
+    hub.feeds_with_updates = []
+
+    hub.process_feeds()
+
+    assert hub.all_entries[0]["published"] == "2026-11-05T07:00:13Z"
+    assert hub.all_entries[0]["published_parsed"] == parsed_feed.entries[0][
+        "updated_parsed"
+    ]
+    assert hub.feeds_with_updates[0]["latest_post_date"] == "2026-11-05T07:00:13Z"
+
+
 def test_generate_latest_rss(hub):
     hub.generate_latest_rss()
     rss_file = hub.config["output_files"]["rss"]
