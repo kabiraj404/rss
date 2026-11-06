@@ -11,6 +11,7 @@ import calendar
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Dict, List, Optional
+from urllib.parse import urlsplit, urlunsplit
 
 import feedparser
 from jinja2 import Environment, FileSystemLoader
@@ -36,6 +37,17 @@ import toml
 
 class RSSHub:
     """Main RSS hub processor."""
+
+    @staticmethod
+    def normalize_feed_url(url: str) -> str:
+        """Normalize feed URLs so equivalent slash variants share one key."""
+        parts = urlsplit(url.strip())
+        normalized_path = "/" + parts.path.lstrip("/")
+        if parts.path.endswith("/") and normalized_path != "/":
+            normalized_path = normalized_path.rstrip("/") + "/"
+        return urlunsplit(
+            (parts.scheme, parts.netloc, normalized_path, parts.query, parts.fragment)
+        )
 
     def __init__(
         self,
@@ -105,7 +117,11 @@ class RSSHub:
                 title = outline.get("title") or outline.get("text", "Unknown Feed")
                 category = outline.get("category", "")
 
-                valid_feed_url = feed_url if feed_url and validate_url(feed_url) else ""
+                valid_feed_url = (
+                    self.normalize_feed_url(feed_url)
+                    if feed_url and validate_url(feed_url)
+                    else ""
+                )
                 valid_html_url = html_url if html_url and validate_url(html_url) else ""
 
                 if feed_url and not valid_feed_url:

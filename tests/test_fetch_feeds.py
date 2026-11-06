@@ -125,6 +125,23 @@ def test_parse_opml_includes_html_only_sources(tmp_path, config_file):
     assert feeds[0]["html_url"] == "https://www.magnumphotos.com/"
 
 
+def test_parse_opml_normalizes_repeated_feed_slashes(tmp_path, config_file):
+    opml_file = tmp_path / "rss.opml"
+    opml_file.write_text(
+        """
+        <opml version="1.0"><body>
+            <outline title="Magnum Photos"
+                xmlUrl="https://www.magnumphotos.com//feed/"
+                htmlUrl="https://www.magnumphotos.com/"/>
+        </body></opml>
+        """
+    )
+
+    hub = RSSHub(opml_file=str(opml_file), config_file=config_file)
+
+    assert hub.parse_opml()[0]["rss_url"] == "https://www.magnumphotos.com/feed/"
+
+
 def test_process_feeds_uses_updated_date_when_published_date_is_missing(
     hub, monkeypatch
 ):
