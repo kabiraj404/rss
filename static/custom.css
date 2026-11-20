@@ -274,11 +274,25 @@ body {
     border: 0 !important;
     border-top: 1px solid var(--border) !important;
     background: transparent !important;
-    padding: 0.8rem 0;
+    padding: 0.35rem 0;
 }
 
 .entry-list .list-group-item:first-child {
     border-top: 0 !important;
+}
+
+.entry-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.65rem;
+    min-width: 0;
+}
+
+.entry-time {
+    flex: 0 0 7.25rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+    white-space: nowrap;
 }
 
 .entry-list a {

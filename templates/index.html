@@ -289,8 +289,10 @@
                     entries.forEach((entry) => {
                         entriesHtml += `
                     <li class="list-group-item">
-                        <a href="${entry.link}" target="_blank" rel="noopener noreferrer">${entry.title}</a>
-                        <small class="text-muted d-block">${formatRelativeTime(entry.published_parsed)}</small>
+                        <div class="entry-row">
+                            <time class="entry-time">${formatRelativeTime(entry.published_parsed)}:</time>
+                            <a href="${entry.link}" target="_blank" rel="noopener noreferrer">${entry.title}</a>
+                        </div>
                     </li>
                 `;
                     });
