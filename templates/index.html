@@ -47,7 +47,7 @@
     <body>
         <div class="container">
             <header class="mb-4 minimal-header">
-                <h2 class="minimal-title">RSS from a few websites</h2>
+                <h2 class="minimal-title">{{ site_data.title }}</h2>
                 <p class="minimal-meta mb-0">
                     Last updated: <span id="updated-time"></span>
                     <!-- <span class="meta-sep">|</span>
@@ -229,9 +229,11 @@
                                           ([category, entries]) => `
                                           <div class="latest-articles-category mb-3">
                                               <h4 class="h6 text-muted">${category}</h4>
-                                              ${entries
-                                                  .map((entry) => createLatestArticleCard(entry))
-                                                  .join("<br>")}
+                                              <div class="latest-articles-grid">
+                                                  ${entries
+                                                      .map((entry) => createLatestArticleCard(entry))
+                                                      .join("")}
+                                              </div>
                                           </div>
                                       `,
                                       )
@@ -331,8 +333,25 @@
 
             function createLatestArticleCard(entry) {
                 const feedName = entry.feed_title || "Latest Feed";
+                const favicon = entry.feed_favicon_url
+                    ? `<img src="${entry.feed_favicon_url}" alt="" width="18" height="18" class="latest-article-favicon">`
+                    : '<span class="latest-article-favicon latest-article-favicon-placeholder" aria-hidden="true"></span>';
+                const published = entry.published_parsed
+                    ? formatRelativeTime(entry.published_parsed)
+                    : "";
 
-                return `${feedName}:<a href="${entry.link}" target="_blank" rel="noopener noreferrer">${entry.title}</a>`;
+                return `
+                    <article class="latest-article-card">
+                        <div class="latest-article-source">
+                            ${favicon}
+                            <span>${feedName}</span>
+                        </div>
+                        <h5 class="latest-article-title">
+                            <a href="${entry.link}" target="_blank" rel="noopener noreferrer">${entry.title}</a>
+                        </h5>
+                        ${published ? `<time class="latest-article-time">${published}</time>` : ""}
+                    </article>
+                `;
             }
         </script>
     </body>
