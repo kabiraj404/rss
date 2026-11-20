@@ -461,10 +461,19 @@ class RSSHub:
             ),
             reverse=True,
         )
+        included_sources = set()
         for entry in sorted_entries:
             entry_date = entry_datetime(entry)
             if not entry_date or entry_date.date() < first_included_day:
                 continue
+            source_key = (
+                entry.get("feed_url")
+                or entry.get("link")
+                or entry.get("title")
+            )
+            if source_key in included_sources:
+                continue
+            included_sources.add(source_key)
             day = entry_date.date().isoformat()
             category = entry.get("feed_category") or "Uncategorized"
             entries_by_day_and_category.setdefault(day, {}).setdefault(

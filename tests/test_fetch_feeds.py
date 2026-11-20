@@ -371,3 +371,46 @@ def test_latest_articles_exclude_entries_older_than_three_days(hub):
 
     assert "Included" in [entry["title"] for entry in site_data["latest_entries"]]
     assert "Excluded" not in [entry["title"] for entry in site_data["latest_entries"]]
+
+
+def test_latest_articles_include_only_one_entry_per_source(hub):
+    now = datetime.now(timezone.utc)
+    hub.all_entries = [
+        feedparser.FeedParserDict(
+            {
+                "title": "Newest Magnum article",
+                "link": "https://example.com/magnum/newest",
+                "published_parsed": (now - timedelta(hours=1)).timetuple(),
+                "feed_category": "Photogenic",
+                "feed_title": "Magnum Photos",
+                "feed_url": "https://www.magnumphotos.com/feed/",
+            }
+        ),
+        feedparser.FeedParserDict(
+            {
+                "title": "Older Magnum article",
+                "link": "https://example.com/magnum/older",
+                "published_parsed": (now - timedelta(hours=2)).timetuple(),
+                "feed_category": "Photogenic",
+                "feed_title": "Magnum Photos",
+                "feed_url": "https://www.magnumphotos.com/feed/",
+            }
+        ),
+        feedparser.FeedParserDict(
+            {
+                "title": "Other source article",
+                "link": "https://example.com/other",
+                "published_parsed": (now - timedelta(hours=3)).timetuple(),
+                "feed_category": "News",
+                "feed_title": "Other Source",
+                "feed_url": "https://example.com/feed.xml",
+            }
+        ),
+    ]
+
+    site_data = hub.generate_site_data()
+
+    titles = [entry["title"] for entry in site_data["latest_entries"]]
+    assert titles.count("Newest Magnum article") == 1
+    assert "Older Magnum article" not in titles
+    assert titles.count("Other source article") == 1
